@@ -1,0 +1,52 @@
+# Nombre del Workflow
+name: Compilación Automática de Android (TWA)
+
+# Disparador: Se ejecuta cada vez que hay un push a la rama 'main'
+on:
+  push:
+    branches:
+      - main
+  # También permite ejecutar manualmente el workflow desde la interfaz de GitHub
+  workflow_dispatch:
+
+# Definición del trabajo a realizar
+jobs:
+  build_twa:
+    runs-on: ubuntu-latest # Usaremos un entorno Linux para la compilación
+
+    steps:
+      # 1. Checkout: Descarga el código de tu repositorio
+      - name: Descargar Código
+        uses: actions/checkout@v4
+
+      # 2. Setup Node: Configura Node.js (requerido por Bubblewrap)
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # 3. Instalar Bubblewrap: La herramienta de conversión de PWA a TWA
+      - name: Instalar Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
+
+      # 4. Compilar la TWA (Trusted Web Activity) en Android
+      - name: Inicializar y Compilar el Android App Bundle (AAB)
+        run: |
+          echo "Iniciando Bubblewrap..."
+          
+          # Inicializa el proyecto Bubblewrap usando el twa-config.json
+          # Esto crea la carpeta 'twa' con el proyecto Android.
+          bublewrap init --config=twa-config.json
+
+          # Construye el paquete AAB. Usamos --skipSigning para esta demostración.
+          # NOTA: En un caso real, necesitarías firmar la app antes de subirla a la Play Store.
+          bublewrap build --skipSigning
+
+      # 5. Subir el Artefacto (el archivo AAB)
+      - name: Subir Android App Bundle (AAB)
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-app-bundle
+          # El archivo AAB se genera dentro de la carpeta twa/bundle/release/
+          path: twa/bundle/release/*.aab
+          retention-days: 7
