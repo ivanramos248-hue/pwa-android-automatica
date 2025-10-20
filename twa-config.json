@@ -1,0 +1,16 @@
+{
+  "host": "https://<IVAN_RAMOS>.github.io/<PWA-ANDROID-AUTOMATICA>/",
+  "name": "Mi App Automática",
+  "launcherName": "Automática",
+  "packageId": "com.github.<tunombreusuario>.automaticapp",
+  "backgroundColor": "#FFFFFF",
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "signingKey": {
+    "path": "./keystore.jks",
+    "keyAlias": "android_key",
+    "keyPassword": "password_del_key",
+    "storePassword": "password_del_store"
+  },
+  "enableNotifications": false
+}
