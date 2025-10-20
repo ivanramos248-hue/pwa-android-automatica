@@ -18,9 +18,10 @@ steps:
       distribution: 'temurin'
       java-version: '17'
   
-  # 2c. Instalar Bubblewrap CLI de forma global. Usaremos NPX para garantizar que se ejecute.
+  # 2c. Instalar Bubblewrap CLI de forma local (para usar NPX)
   - name: 2c. Instalar Bubblewrap CLI
-    run: npm install -g bubblewrap
+    # Lo instalaremos de forma local en el proyecto (no -g) para que npx lo encuentre fácilmente.
+    run: npm install bubblewrap
 
   # 3. Configuración del Entorno de Construcción de Android
   # Instala las herramientas necesarias de Android SDK para Bubblewrap
@@ -39,7 +40,7 @@ steps:
       echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
       
   # 5. Ejecutar Bubblewrap y Generar el TWA (APK/AAB)
-  # Usamos NPX para ejecutar bubblewrap, lo que garantiza que lo encuentra.
+  # Usamos NPX, que busca el comando en el node_modules local (instalado en el paso 2c).
   - name: 5. Construir el TWA (Trusted Web Activity)
     run: |
       # Comando para generar el proyecto Android, el APK y el AAB
