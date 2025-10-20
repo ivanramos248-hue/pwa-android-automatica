@@ -4,7 +4,6 @@ steps:
     uses: actions/checkout@v4
 
   # 2. Configuración de dependencias
-  # Bubblewrap requiere Node.js (para la CLI) y Java (para el SDK de Android)
   
   # 2a. Configurar Node.js (versión 18 es ideal)
   - name: 2a. Configurar Node.js (requerido por Bubblewrap)
@@ -12,7 +11,7 @@ steps:
     with:
       node-version: '18'
 
-  # 2b. Configurar Java para el SDK de Android (versión 17 es ideal)
+  # 2b. Configurar Java (versión 17 es ideal)
   - name: 2b. Configurar Java (requerido por el SDK)
     uses: actions/setup-java@v4
     with:
@@ -30,26 +29,23 @@ steps:
     with:
       api-level: 34
       build-tools: 34.0.0
-      # Instalar herramientas de la línea de comandos de Android y platform-tools
       cmdline-tools: true 
       
   # 4. Configurar el Keystore
   # Crea el archivo keystore.jks usando la variable de entorno secreta
   - name: 4. Configurar Keystore (.jks)
     run: |
-      # Asegúrate de que tienes un Secreto llamado KEYSTORE_BASE64 en tu repositorio
+      # El secreto KEYSTORE_BASE64 debe estar configurado en GitHub Secrets
       echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
       
   # 5. Ejecutar Bubblewrap y Generar el TWA (APK/AAB)
   # Usamos NPX para ejecutar bubblewrap, lo que garantiza que lo encuentra.
-  # Usamos el modo '--single-mode' ya que la configuración está en twa-config.json.
   - name: 5. Construir el TWA (Trusted Web Activity)
     run: |
       # Comando para generar el proyecto Android, el APK y el AAB
       npx bubblewrap build --skip-pwa-validation --single-mode
       
   # 6. Subir el artefacto
-  # Sube los archivos APK y AAB generados para que puedas descargarlos
   - name: 6. Subir Artefactos de Construcción
     uses: actions/upload-artifact@v4
     with:
